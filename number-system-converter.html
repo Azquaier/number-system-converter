@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Number System Converter</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --orange: #ff6500;
+        --red: #c70039;
+        --blue: #1e3e62;
+        --dark-blue: #0b192c;
+        --dark-blue-transparent: rgba(11, 25, 44, 0.8);
+        --grid-line: rgba(255, 255, 255, 0.05);
+        --text-color: #fafafa;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        font-family: "Courier New", Courier, monospace;
+        color: var(--text-color);
+      }
+
+      .azq-background {
+        background: linear-gradient(135deg, #1c1f2b 0%, #0c0f17 100%);
+        position: relative;
+        min-height: 100vh;
+      }
+
+      .azq-background::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: linear-gradient(
+            to right,
+            var(--grid-line) 1px,
+            transparent 1px
+          ),
+          linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+        background-size: 45px 45px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .converter-container {
+        width: 100%;
+        max-width: 800px;
+        padding: 80px 20px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        min-height: 100vh;
+        position: relative;
+        z-index: 2;
+      }
+
+      .converter-header {
+        width: 100%;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .header-title {
+        font-size: 2.5rem;
+        color: var(--orange);
+        margin-bottom: 10px;
+        letter-spacing: 2px;
+      }
+
+      .header-subtitle {
+        font-size: 1rem;
+        color: var(--text-color);
+        margin-bottom: 20px;
+      }
+
+      .terminal-window {
+        background-color: var(--dark-blue-transparent);
+        border-radius: 8px;
+        padding: 20px;
+        width: 100%;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        border-left: 3px solid var(--blue);
+      }
+
+      .terminal-header {
+        display: flex;
+        margin-bottom: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 10px;
+      }
+
+      .terminal-button {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 8px;
+      }
+
+      .red {
+        background-color: var(--red);
+      }
+      .yellow {
+        background-color: var(--orange);
+      }
+      .green {
+        background-color: #4cd964;
+      }
+
+      .terminal-title {
+        color: var(--orange);
+        margin-left: 10px;
+        font-size: 14px;
+      }
+
+      .converter-form {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .form-group label {
+        color: var(--text-color);
+        font-weight: bold;
+      }
+
+      .form-input {
+        background-color: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 12px;
+        border-radius: 4px;
+        color: var(--text-color);
+        font-family: "Courier New", Courier, monospace;
+        transition: border-color 0.3s ease;
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: #888888e0;
+      }
+
+      .form-input::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+      }
+
+      .input-row {
+        display: flex;
+        gap: 15px;
+      }
+
+      .input-row .form-group {
+        flex: 1;
+      }
+
+      .convert-button {
+        background-color: var(--orange);
+        color: var(--text-color);
+        border: none;
+        padding: 12px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: "Courier New", Courier, monospace;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: background-color 0.3s ease;
+        width: 100%;
+      }
+
+      .convert-button:hover {
+        background-color: var(--red);
+      }
+
+      .result-section {
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: 4px;
+        padding: 15px;
+        margin-top: 20px;
+        border-left: 3px solid var(--orange);
+      }
+
+      .result-title {
+        color: var(--orange);
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+
+      .result-value {
+        color: var(--text-color);
+        word-break: break-all;
+        font-size: 1.1rem;
+      }
+
+      .terminal-prompt {
+        color: var(--orange);
+        font-weight: bold;
+      }
+
+      @media (max-width: 768px) {
+        .input-row {
+          flex-direction: column;
+        }
+
+        .header-title {
+          font-size: 2rem;
+        }
+
+        .converter-container {
+          padding: 20px 15px;
+        }
+      }
+
+      .colored-orange {
+        color: #ff6500;
+      }
+
+      .colored-red {
+        color: #c70039;
+      }
+
+      .back-link {
+        margin-top: 15px;
+      }
+
+      .back-link a {
+        color: #fff;
+        text-decoration: none;
+        font-family: "Courier New", monospace;
+        font-size: 16px;
+        transition: color 0.3s ease;
+      }
+
+      .back-link a:hover {
+        color: #ff6500;
+      }
+    </style>
+
+    <script>
+      document.documentElement.className =
+        document.documentElement.className.replace("no-js", "js");
+    </script>
+  </head>
+
+  <body class="azq-background">
+    <div class="converter-container">
+      <header class="converter-header">
+        <h1 class="header-title">Number System Converter</h1>
+        <p class="header-subtitle">
+          Convert numbers between different numeral systems (up to base 36)
+        </p>
+      </header>
+
+      <div class="terminal-window">
+        <div class="terminal-header">
+          <div class="terminal-button red"></div>
+          <div class="terminal-button yellow"></div>
+          <div class="terminal-button green"></div>
+          <span class="terminal-title"
+            >azquaier@system: ~/number-system-converter</span
+          >
+        </div>
+
+        <form
+          id="converter-form"
+          class="converter-form"
+          action="/number-system-converter"
+          method="POST"
+        >
+          <div class="form-group">
+            <label for="inputNumber">Enter Number:</label>
+            <input
+              type="text"
+              id="inputNumber"
+              name="inputNumber"
+              class="form-input"
+              placeholder="Enter a number to convert..."
+              required
+              value="{{ number if number else '' }}"
+            />
+          </div>
+
+          <div class="input-row">
+            <div class="form-group">
+              <label for="fromBase">From Base (2-36):</label>
+              <input
+                type="number"
+                id="fromBase"
+                name="fromBase"
+                class="form-input"
+                min="2"
+                max="36"
+                value="{{ from_base if from_base else 10 }}"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="toBase">To Base (2-36):</label>
+              <input
+                type="number"
+                id="toBase"
+                name="toBase"
+                class="form-input"
+                min="2"
+                max="36"
+                value="{{ to_base if to_base else 2 }}"
+                required
+              />
+            </div>
+          </div>
+
+          <button type="submit" class="convert-button">Convert</button>
+        </form>
+
+        {% if result is not none %}
+        <div id="result-section" class="result-section">
+          <div class="result-title">Result:</div>
+          <div id="result-value" class="result-value">{{ result }}</div>
+        </div>
+        {% endif %}
+      </div>
+  </body>
+</html>
